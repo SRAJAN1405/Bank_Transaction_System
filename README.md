@@ -1,111 +1,110 @@
 # 🏦 Bank Transaction System
 
-A production-inspired backend banking system built with **Node.js**, **Express.js**, **MongoDB**, and **Mongoose**. This project demonstrates how modern banking applications ensure **secure**, **consistent**, and **reliable** money transfers using **ACID transactions**, **double-entry ledger accounting**, and **idempotent APIs**.
+> **A production-inspired banking backend that simulates secure money transfers using ACID transactions, double-entry ledger accounting, MongoDB sessions, and idempotent request handling.**
+
+![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=node.js&logoColor=white)
+![Express.js](https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white)
+![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white)
+![Mongoose](https://img.shields.io/badge/Mongoose-880000?style=for-the-badge)
+![JWT](https://img.shields.io/badge/JWT-black?style=for-the-badge&logo=jsonwebtokens)
 
 ---
 
-## ✨ Features
+# 📖 Overview
+
+**Bank Transaction System** is a backend application that models the core transaction flow of a banking system. It focuses on **transaction reliability**, **data consistency**, and **secure fund transfers** by implementing **MongoDB ACID transactions**, **double-entry ledger accounting**, **JWT authentication**, **idempotent request handling**, and **dynamic balance computation**.
+
+---
+
+# ✨ Features
 
 - 🔐 JWT Authentication & Authorization
 - 👤 User Registration & Login
-- 🏦 Bank Account Management
-- 💸 Secure Money Transfer
-- 📒 Double Entry Ledger System
-- 🔄 MongoDB ACID Transactions
-- 🛡️ Idempotent Transaction Handling
-- 🚫 JWT Token Blacklisting (Logout Support)
-- ⏳ Automatic Cleanup using MongoDB TTL Index
-- 📊 Transaction History
-- ⚡ Async Error Handling
-- 📁 Modular MVC Architecture
+- 🏦 Multiple Bank Account Management
+- 💸 Secure Fund Transfers
+- 🔄 MongoDB Session-Based ACID Transactions
+- 📒 Double-Entry Ledger Accounting
+- 🛡️ Idempotent Transaction Processing
+- 📊 Dynamic Balance Calculation using Aggregation Pipeline
+- 🚫 JWT Token Blacklisting
+- ⏳ Automatic Blacklisted Token Cleanup using MongoDB TTL Index
+- 📧 Email Notifications
+- ⚡ Centralized Error Handling
+- 📂 Modular MVC Architecture
 
 ---
 
-## 🛠️ Tech Stack
+# 🛠 Tech Stack
 
-| Technology | Usage |
-|------------|-------|
-| Node.js | Backend Runtime |
-| Express.js | REST API Framework |
-| MongoDB | Database |
-| Mongoose | ODM |
-| JWT | Authentication |
-| bcrypt | Password Hashing |
-| Express Validator | Request Validation |
+| Category | Technologies |
+|----------|--------------|
+| Backend | Node.js, Express.js |
+| Database | MongoDB, Mongoose |
+| Authentication | JWT, bcrypt |
+| Email Service | Nodemailer |
+| Architecture | MVC |
 
 ---
 
-# 📂 Project Structure
+# 🏗 Core Banking Concepts
+
+- MongoDB ACID Transactions
+- MongoDB Sessions
+- Double-Entry Ledger Accounting
+- Transaction Rollback
+- Idempotency Keys
+- Aggregation Pipelines
+- JWT Authentication
+- Token Blacklisting
+- MongoDB TTL Index
+
+---
+
+# 🔄 Transaction Workflow
 
 ```text
-Bank_Transaction_System/
-│
-├── controllers/
-├── middleware/
-├── models/
-├── routes/
-├── services/
-├── utils/
-├── config/
-├── app.js
-├── server.js
-└── package.json
-```
-
----
-
-# 🔄 Money Transfer Workflow
-
-```text
-Client
-   │
-   ▼
 Authenticate User
-   │
-   ▼
+        │
+        ▼
 Validate Request
-   │
-   ▼
-Check Idempotency Key
-   │
-   ▼
+        │
+        ▼
+Verify Idempotency Key
+        │
+        ▼
 Start MongoDB Session
-   │
-   ▼
-Create Transaction
-   │
-   ▼
-Debit Sender
-   │
-   ▼
-Credit Receiver
-   │
-   ▼
+        │
+        ▼
+Create Transaction Record
+        │
+        ▼
+Debit Sender Account
+        │
+        ▼
+Credit Receiver Account
+        │
+        ▼
 Create Ledger Entries
-   │
-   ▼
+        │
+        ▼
 Commit Transaction
-   │
-   ▼
-Return Success
+        │
+        ▼
+Return Success Response
 ```
 
 ---
 
-# 📒 Double Entry Ledger
+# 📒 Double-Entry Ledger
 
-Every transaction creates **two ledger entries**.
+Every successful transfer generates two immutable ledger entries.
 
-Example:
+| Account | Entry |
+|---------|-------|
+| Sender | Debit |
+| Receiver | Credit |
 
-Transfer ₹1000 from Alice to Bob
-
-| Account | Entry Type | Amount |
-|----------|------------|--------|
-| Alice | Debit | ₹1000 |
-| Bob | Credit | ₹1000 |
-
-The account balance is calculated dynamically.
+Account balances are computed dynamically instead of storing mutable balances.
 
 ```text
 Balance = Total Credits − Total Debits
@@ -113,73 +112,59 @@ Balance = Total Credits − Total Debits
 
 ---
 
-# 🔄 MongoDB Transactions
+# 📡 REST API
 
-The project uses **MongoDB Sessions** to guarantee ACID properties.
+## 🔐 Authentication
 
-If any database operation fails:
-
-- Debit is rolled back
-- Credit is rolled back
-- Ledger entries are rolled back
-- Transaction record is rolled back
-
-This ensures **all-or-nothing execution**.
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/auth/register` | Register a new user |
+| POST | `/api/auth/login` | Login user and generate JWT |
+| POST | `/api/auth/logout` | Logout user and blacklist JWT |
 
 ---
 
-# 🛡️ Idempotency
+## 🏦 Accounts
 
-Each transfer request includes an **Idempotency Key**.
-
-This prevents duplicate money transfers caused by:
-
-- Network retries
-- Double-clicking the transfer button
-- Client timeouts
-
-The same request is processed only once.
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/accounts/` | Create a new bank account |
+| GET | `/api/accounts/` | Retrieve all accounts of the authenticated user |
+| GET | `/api/accounts/balance/:accountId` | Retrieve current account balance |
 
 ---
 
-# 🔐 Authentication
+## 💸 Transactions
 
-- JWT Authentication
-- Protected Routes
-- Token Blacklisting
-- Automatic blacklist cleanup using MongoDB TTL Index
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/transactions/` | Create a fund transfer transaction |
+| POST | `/api/transactions/system/initial-funds` | Credit initial funds using the system account |
 
 ---
 
-# 📌 API Endpoints
+# 📂 Project Structure
 
-## Authentication
-
-```http
-POST /api/auth/register
-POST /api/auth/login
-POST /api/auth/logout
-```
-
-## Account
-
-```http
-POST /api/accounts
-GET /api/accounts
-GET /api/accounts/:id
-```
-
-## Transactions
-
-```http
-POST /api/transactions/transfer
-GET /api/transactions
-GET /api/transactions/:id
+```text
+Bank_Transaction_System
+│
+├── src
+│   ├── config
+│   ├── controllers
+│   ├── middleware
+│   ├── models
+│   ├── routes
+│   ├── services
+│   └── app.js
+│
+├── server.js
+├── package.json
+└── README.md
 ```
 
 ---
 
-# 🚀 Installation
+# 🚀 Getting Started
 
 ## Clone Repository
 
@@ -187,7 +172,7 @@ GET /api/transactions/:id
 git clone https://github.com/SRAJAN1405/Bank_Transaction_System.git
 ```
 
-## Move into Project
+## Navigate to Project
 
 ```bash
 cd Bank_Transaction_System
@@ -199,9 +184,9 @@ cd Bank_Transaction_System
 npm install
 ```
 
-## Create Environment Variables
+## Configure Environment Variables
 
-Create a `.env` file.
+Create a `.env` file in the root directory.
 
 ```env
 PORT=5000
@@ -209,9 +194,13 @@ PORT=5000
 MONGO_URI=your_mongodb_connection_string
 
 JWT_SECRET=your_jwt_secret
+
+SYSTEM_EMAIL=your_email
+
+SYSTEM_EMAIL_PASSWORD=your_email_password
 ```
 
-## Run Server
+## Start Development Server
 
 ```bash
 npm run dev
@@ -219,51 +208,46 @@ npm run dev
 
 ---
 
-# 📖 Concepts Implemented
+# 🎯 Project Highlights
 
-- MongoDB Aggregation Pipeline
-- MongoDB Sessions
-- ACID Transactions
-- Double Entry Accounting
-- Idempotency Keys
-- JWT Authentication
-- Token Blacklisting
-- MongoDB TTL Index
-- Express Middleware
-- Mongoose Schema Methods
-- Async Error Handling
-- MVC Architecture
+- Simulates secure banking workflows with atomic money transfers.
+- Guarantees transaction consistency using MongoDB ACID transactions.
+- Prevents duplicate fund transfers through idempotency keys.
+- Maintains accurate balances using double-entry ledger accounting.
+- Dynamically computes balances using MongoDB aggregation pipelines.
+- Enhances authentication security with JWT token blacklisting and automatic TTL cleanup.
 
 ---
 
-# 🎯 Learning Outcomes
+# 📚 Learning Outcomes
 
-This project demonstrates real-world backend engineering concepts used in financial systems, including:
+This project demonstrates backend engineering concepts commonly used in financial systems:
 
-- Secure money transfers
-- Reliable transaction processing
-- Preventing duplicate financial operations
+- Atomic transaction processing
 - Ledger-based accounting
-- MongoDB transaction management
-- JWT-based authentication
+- MongoDB Sessions
+- Aggregation Pipelines
+- JWT Authentication
+- Idempotent APIs
+- Database consistency
 - Scalable backend architecture
 
 ---
 
 # 🤝 Contributing
 
-Contributions, issues, and feature requests are welcome!
+Contributions, issues, and feature requests are welcome.
 
-If you'd like to improve this project, feel free to fork the repository and submit a pull request.
+Feel free to fork the repository and submit a pull request.
 
 ---
 
 # ⭐ Support
 
-If you found this project helpful, consider giving it a ⭐ on GitHub!
+If you found this project useful, consider giving it a **⭐ Star** on GitHub.
 
 ---
 
-# 📜 License
+# 📄 License
 
-This project is developed for educational purposes and backend system design practice.
+This project is intended for educational purposes and backend system design practice.
